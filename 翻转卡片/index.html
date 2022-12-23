@@ -1,0 +1,170 @@
+<!--
+ * @Author: 卢天宇
+ * @Date: 2022-12-22 01:33:56
+ * @Description: 
+-->
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+  <style>
+    /* @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100&display=swap'); */
+    @font-face {
+      font-family: 'M PLUS Rounded 1c';
+      src: url('./fonts/MPLUSRounded1c/MPLUSRounded1c-Regular.ttf');
+    }
+    @font-face {
+      font-family: 'XX';
+      src: url('./fonts/Noto_Sans_SC/NotoSansSC-Regular.otf');
+    }
+  </style>
+  <style>
+    * {
+      margin: 0px;
+      padding: 0px;
+      font-family: 'XX', sans-serif;
+    }
+
+    .container {
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      row-gap: 10px;
+    }
+
+    .container .title {
+      /* font-weight: bolder; */
+      font-size: 24px;
+    }
+
+    .container .title #regSpan {
+      color: goldenrod;
+      margin-left: 5px;
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
+      -webkit-text-stroke: 1px #41478d;
+      color: transparent;
+    }
+
+    .boxContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .box {
+      height: 600px;
+      width: 700px;
+      perspective: 800px;
+      transform-style: preserve-3d;
+      cursor: pointer;
+    }
+
+
+    .box+.box {
+      margin-left: 20px;
+    }
+
+    .box .item {
+      width: 100%;
+      height: 100%;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      transition: transform .1s, box-shadow .3s;
+      will-change: transform;
+    }
+
+    .box:hover .item {
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, .3);
+    }
+
+    .box .item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: 32% 50%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="title">转换角度<span id="regSpan">0</span></div>
+    <div class="boxContainer">
+      <div class="box">
+        <div class="item">
+          <!-- <img
+        src="https://i.ytimg.com/vi/LLovCBILi2Y/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD8q00N1NRy1A0PLe85QGLe-sRrow"
+        alt=""> -->
+          <img src="./img/3.jpg" alt="">
+        </div>
+      </div>
+      <div class="box">
+        <div class="item">
+          <!-- <img
+        src="https://i.ytimg.com/vi/LLovCBILi2Y/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD8q00N1NRy1A0PLe85QGLe-sRrow"
+        alt=""> -->
+          <img src="./img/3.jpg" alt="">
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<script>
+  let box = document.querySelectorAll('.item');
+  let items = document.querySelectorAll('.item');
+  let regSpan = document.querySelector('#regSpan');
+  let { height: boxHeight, width: boxWidth } = box[0].getBoundingClientRect();
+  const maxReg = 6;
+  let multiple = maxReg / (boxHeight / 2);
+  box.forEach((item, index) => {
+    item.addEventListener('mousemove', e => {
+      let { offsetX: x, offsetY: y } = e;
+      let yy = Math.abs(y - boxHeight / 2); // * y 的距离
+      let xx = Math.abs(x - boxWidth / 2); // * x 的距离
+      const sum = (yy + xx) / 4; // * 总的距离
+      let reg = sum * multiple;
+      reg = reg >= maxReg ? maxReg : reg;
+      let rotateX = 0;
+      // x < boxWidth / 2 ? 1 : -1;
+      let rotateY = 0;
+      // y < boxHeight / 2 ? -1 : 1;
+      if (x < boxWidth / 2 && y < boxHeight / 2) {
+        console.log('xx')
+        rotateX = 1;
+        rotateY = -1;
+      } else if (x > boxWidth / 2 && y < boxHeight / 2) {
+        rotateX = 1;
+        rotateY = 1;
+      } else if (x < boxWidth / 2 && y > boxHeight / 2) {
+        rotateX = -1;
+        rotateY = -1;
+      } else if (x > boxWidth / 2 && y > boxHeight / 2) {
+        rotateX = -1;
+        rotateY = 1;
+      } else {
+        console.log('xxxx')
+      }
+      items[index].style.transform = `rotate3d(${rotateX}, ${rotateY}, 0, ${reg}deg)`;
+      regSpan.innerText = reg;
+    })
+
+    item.addEventListener('mouseleave', e => {
+      items[index].style.transform = `rotate3d(0, 0, 0, ${0}deg)`;
+    })
+  })
+
+</script>
+
+</html>
