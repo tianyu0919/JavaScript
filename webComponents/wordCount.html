@@ -1,0 +1,93 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+  <article>
+    <input>
+    <p id="inputVal"></span>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc pulvinar sed justo sed viverra. Aliquam ac
+      scelerisque
+      tellus. Vivamus porttitor nunc vel nibh rutrum hendrerit. Donec viverra vestibulum pretium. Mauris at eros vitae
+      ante
+      pellentesque bibendum. Etiam et blandit purus, nec aliquam libero. Etiam leo felis, pulvinar et diam id, sagittis
+      pulvinar diam. Nunc pellentesque rutrum sapien, sed faucibus urna sodales in. Sed tortor nisl, egestas nec egestas
+      luctus, faucibus vitae purus. Ut elit nunc, pretium eget fermentum id, accumsan et velit. Sed mattis velit diam, a
+      elementum nunc facilisis sit amet.</p>
+    <p>Pellentesque ornare tellus sit amet massa tincidunt congue. Morbi cursus, tellus vitae pulvinar dictum, dui
+      turpis
+      faucibus ipsum, nec hendrerit augue nisi et enim. Curabitur felis metus, euismod et augue et, luctus dignissim
+      metus.
+      Mauris placerat tellus id efficitur ornare. Cras enim urna, vestibulum vel molestie vitae, mollis vitae eros. Sed
+      lacinia scelerisque diam, a varius urna iaculis ut. Nam lacinia, velit consequat venenatis pellentesque, leo
+      tortor
+      porttitor est, sit amet accumsan ex lectus eget ipsum. Quisque luctus, ex ac fringilla tincidunt, risus mauris
+      sagittis mauris, at iaculis mauris purus eget neque. Donec viverra in ex sed ullamcorper. In ac nisi vel enim
+      accumsan
+      feugiat et sed augue. Donec nisl metus, sollicitudin eu tempus a, scelerisque sed diam.</p>
+    <p is="word-count"></p>
+  </article>
+</body>
+
+<script>
+  const inputVal = document.querySelector('#inputVal');
+  const input = document.querySelector('input');
+
+  input.addEventListener('input', (e) => {
+    // inputVal.innerText = e.target.value;
+  })
+
+  // 为新元素创建一个类
+  class WordCount extends HTMLParagraphElement {
+    constructor() {
+      // 在构造器中先调用一下 super
+      super();
+
+      // 计数器指向元素的父级
+      var wcParent = this.parentNode;
+
+      function countWords(node) {
+        const { children } = node;
+        let num = 0;
+        Array.from(children).forEach(child => {
+          return num += (child.innerText || child.textContent || child.value || "").trim().split('').length
+        });
+        // var text = node.innerText || node.textContent || node.value || node.target.value
+        // return text.trim().split(/\s+/g).length;
+        return num;
+      }
+
+      var count = 'Words: ' + countWords(wcParent);
+
+      // 创建一个 shadow root
+      var shadow = this.attachShadow({ mode: 'open' });
+
+      // 创建文本节点并向其添加计数器
+      var text = document.createElement('span');
+      text.textContent = count;
+
+      // 将其添加到 shadow root 上
+      shadow.appendChild(text);
+
+      // 当元素内容发生变化时更新计数
+      setInterval(function () {
+        var count = 'Words: ' + countWords(wcParent);
+        text.textContent = count;
+      }, 200);
+    }
+  }
+
+  // 定义新元素
+  customElements.define('word-count', WordCount, { extends: 'p' });
+</script>
+
+</html>

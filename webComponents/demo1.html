@@ -1,0 +1,39 @@
+<!--
+ * @Author: 卢天宇
+ * @Date: 2023-02-03 23:07:56
+ * @Description: 
+-->
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+  <div>
+    hello word
+  </div>
+  <word-count data-text="Hello Word Count">aha</word-count>
+</body>
+<script>
+  class wordCount extends HTMLParagraphElement {
+    constructor() {
+      super();
+      console.log("wordCount");
+    }
+
+    connectedCallback() {
+      console.log(this);
+    }
+  }
+  customElements.define('word-count', wordCount, { extends: 'div' });
+</script>
+
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+  <!-- <ul is="expanding-list">
+    <li>hah</li>
+    <li>xx</li>
+  </ul> -->
+</body>
+
+<script>
+  class ExapandingList extends HTMLElement {
+    static get observedAttributes() { return ['list']; }
+    constructor() {
+      super();
+      var shadow = this.attachShadow({ mode: 'open' });
+      var div = document.createElement('div');
+      div.classList.add('exapandingBox');
+      var style = document.createElement('style');
+      shadow.appendChild(style);
+      shadow.appendChild(div);
+    }
+
+    connectedCallback() {
+      console.log('aa')
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+      console.log('Custom element attributes changed.');
+      console.log(name, oldValue, newValue);
+      let exapandingBox = this.shadowRoot.querySelector('.exapandingBox');
+      if (name === 'list') {
+        let frg = document.createDocumentFragment();
+        JSON.parse(newValue).forEach((item, idx) => {
+          let span = document.createElement('div');
+          span.innerText = item;
+          frg.appendChild(span);
+        })
+        exapandingBox.appendChild(frg);
+      }
+    }
+  }
+
+  customElements.define("exapanding-list", ExapandingList);
+
+  let exapandingList = document.createElement('exapanding-list');
+  console.log(exapandingList);
+  exapandingList.setAttribute('list', JSON.stringify(['name', 'age', 'sex']));
+  document.body.appendChild(exapandingList);
+</script>
+
+
+</html>
