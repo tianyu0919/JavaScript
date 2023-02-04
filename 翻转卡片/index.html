@@ -76,6 +76,11 @@
       margin-left: 20px;
     }
 
+    .box .rotate-box {
+      width: 100%;
+      height: 100%;
+    }
+
     .box .item {
       width: 100%;
       height: 100%;
@@ -104,19 +109,23 @@
     <div class="title">转换角度<span id="regSpan">0</span></div>
     <div class="boxContainer">
       <div class="box">
-        <div class="item">
-          <!-- <img
+        <div class="rotate-box">
+          <div class="item">
+            <!-- <img
         src="https://i.ytimg.com/vi/LLovCBILi2Y/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD8q00N1NRy1A0PLe85QGLe-sRrow"
         alt=""> -->
-          <img src="./img/3.jpg" alt="">
+            <img src="./img/3.jpg" alt="">
+          </div>
         </div>
       </div>
       <div class="box">
-        <div class="item">
-          <!-- <img
+        <div class="rotate-box">
+          <div class="item">
+            <!-- <img
         src="https://i.ytimg.com/vi/LLovCBILi2Y/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD8q00N1NRy1A0PLe85QGLe-sRrow"
         alt=""> -->
-          <img src="./img/2.jpg" alt="">
+            <img src="./img/2.jpg" alt="">
+          </div>
         </div>
       </div>
     </div>
@@ -124,7 +133,7 @@
 </body>
 
 <script>
-  let box = document.querySelectorAll('.item');
+  let box = document.querySelectorAll('.rotate-box');
   let items = document.querySelectorAll('.item');
   let regSpan = document.querySelector('#regSpan');
   let { height: boxHeight, width: boxWidth } = box[0].getBoundingClientRect();
@@ -147,7 +156,7 @@
 
       console.log(rotateX, rotateY);
       items[index].style.transform = `perspective(700px) rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
-        regSpan.innerText = `rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
+      regSpan.innerText = `rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
     })
 
     item.addEventListener('mouseleave', e => {
