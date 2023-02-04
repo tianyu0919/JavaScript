@@ -142,8 +142,8 @@
       let xx = x - boxWidth / 2;
       let yy = y - boxHeight / 2;
 
-      let rotateX = -(xx * multipleX).toFixed(2);
-      let rotateY = (yy * multipleY).toFixed(2);
+      let rotateX = (xx * multipleX).toFixed(2);
+      let rotateY = -(yy * multipleY).toFixed(2);
 
       console.log(rotateX, rotateY);
       items[index].style.transform = `perspective(700px) rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
