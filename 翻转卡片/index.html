@@ -81,21 +81,23 @@
       height: 100%;
     }
 
-    .box .item {
+    .box .rotate-box .item {
       width: 100%;
       height: 100%;
       background-color: #eee;
       border: 1px solid #ccc;
-      transition: transform .1s, box-shadow .3s;
+      transition: transform .3s, box-shadow .3s;
       will-change: transform;
     }
 
-    .box:hover .item {
+    .box .rotate-box:hover .item {
       box-shadow: 0px 0px 10px rgba(0, 0, 0, .3);
-      transition: box-shadow .3s;
+      /* transition: box-shadow .3s; */
+      transition: transform .0s, box-shadow .3s;
+      /* transition-delay: .3s, 0s; */
     }
 
-    .box .item img {
+    .box .rotate-box .item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -137,11 +139,11 @@
   let items = document.querySelectorAll('.item');
   let regSpan = document.querySelector('#regSpan');
   let { height: boxHeight, width: boxWidth } = box[0].getBoundingClientRect();
-  const maxReg = 6;
-  const maxRegX = 1;
-  const maxRegY = 1.5
-  let multipleY = maxRegX / (boxHeight / 2);
-  let multipleX = maxRegY / (boxWidth / 2);
+  const maxReg = 3;
+  const maxRegX = 1.5;
+  const maxRegY = 3;
+  let multipleY = maxReg / (boxHeight / 2);
+  let multipleX = maxReg / (boxWidth / 2);
 
 
   console.log(multipleX, multipleY)
