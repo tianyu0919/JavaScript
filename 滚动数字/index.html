@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+  <script src="./index.js"></script>
+  <style>
+    #div {
+      position: fixed;
+      top: 50%;
+      left: 0px;
+      transform: translateY(-50%);
+      background-color: aqua;
+      width: 100px;
+      height: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="div"></div>
+</body>
+
+<script>
+  // 按最佳帧数间隔执行N次函数，持续时间{duration}
+  function repeatAction(fn, duration) {
+    let oldTimestamp = performance.now();
+    let actionCount = 0; // 记录执行次数
+    const startTime = performance.now(); // 记录开始执行时间
+    return new Promise((resolve, reject) => {
+      requestAnimationFrame(function loop() {
+        const curTimestamp = performance.now();
+        duration -= curTimestamp - oldTimestamp;
+        if (duration > 0) {
+          actionCount++;
+          fn();
+          oldTimestamp = curTimestamp;
+          requestAnimationFrame(loop);
+        } else {
+          console.log('执行总时间：', performance.now() - startTime);
+          console.log('执行总次数：', actionCount);
+          resolve();
+        }
+      })
+    })
+  }
+
+  let oDiv = document.querySelector('#div');
+  let n = 1;
+  // repeatAction(() => {
+  //   n += 1
+  //   oDiv.style.transform = `translateY(-50%) translateX(${n += 1}px)`;
+  // }, 3000);
+
+  scrollingNumber(100);
+  scrollingNumberPer(100)
+</script>
+
+</html>
