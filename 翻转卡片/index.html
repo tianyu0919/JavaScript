@@ -1,9 +1,9 @@
 <!--
- * @Author: 卢天宇
- * @Date: 2022-12-22 01:33:56
+ * @Author: tianyu
+ * @Date: 2023-02-07 16:41:19
  * @Description: 
 -->
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html lang="zh-cn">
 
 <head>
@@ -17,20 +17,20 @@
   <style>
     /* @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100&display=swap'); */
     @font-face {
-      font-family: 'M PLUS Rounded 1c';
-      src: url('./fonts/MPLUSRounded1c/MPLUSRounded1c-Regular.ttf');
+      font-family: "M PLUS Rounded 1c";
+      src: url("./fonts/MPLUSRounded1c/MPLUSRounded1c-Regular.ttf");
     }
 
     @font-face {
-      font-family: 'XX';
-      src: url('./fonts/Noto_Sans_SC/NotoSansSC-Regular.otf');
+      font-family: "XX";
+      src: url("./fonts/Noto_Sans_SC/NotoSansSC-Regular.otf");
     }
   </style>
   <style>
     * {
       margin: 0px;
       padding: 0px;
-      font-family: 'XX', sans-serif;
+      font-family: "XX", sans-serif;
     }
 
     .container {
@@ -51,7 +51,7 @@
     .container .title #regSpan {
       color: goldenrod;
       margin-left: 5px;
-      font-family: 'M PLUS Rounded 1c', sans-serif;
+      font-family: "M PLUS Rounded 1c", sans-serif;
       text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.3);
       -webkit-text-stroke: 1px #41478d;
       color: transparent;
@@ -71,7 +71,6 @@
       cursor: pointer;
     }
 
-
     .box+.box {
       margin-left: 20px;
     }
@@ -79,6 +78,7 @@
     .box .rotate-box {
       width: 100%;
       height: 100%;
+      perspective: 500px;
     }
 
     .box .rotate-box .item {
@@ -86,22 +86,46 @@
       height: 100%;
       background-color: #eee;
       border: 1px solid #ccc;
-      transition: transform .3s, box-shadow .3s;
+      transition: transform 0.3s, box-shadow 0.3s;
       will-change: transform;
+      perspective: 500px;
     }
 
     .box .rotate-box:hover .item {
-      box-shadow: 0px 0px 10px rgba(0, 0, 0, .3);
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
       /* transition: box-shadow .3s; */
-      transition: transform .0s, box-shadow .3s;
+      transition: transform 0s, box-shadow 0.3s;
       /* transition-delay: .3s, 0s; */
+    }
+
+    .box .rotate-box .item div {
+      position: relative;
+      height: 100%;
+      width: 100%;
+    }
+
+    .box .rotate-box .item div a {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .box .rotate-box .item div button {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
     .box .rotate-box .item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      position: relative;
+      z-index: -1;
       object-position: 32% 50%;
+      /* pointer-events: none; */
     }
   </style>
 </head>
@@ -116,7 +140,11 @@
             <!-- <img
         src="https://i.ytimg.com/vi/LLovCBILi2Y/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD8q00N1NRy1A0PLe85QGLe-sRrow"
         alt=""> -->
-            <img src="./img/3.jpg" alt="">
+            <div>
+              <img src="./img/3.jpg" alt="" />
+              <a href="#">点我跳转</a>
+              <button>点击</button>
+            </div>
           </div>
         </div>
       </div>
@@ -126,7 +154,7 @@
             <!-- <img
         src="https://i.ytimg.com/vi/LLovCBILi2Y/hq720.jpg?sqp=-oaymwEcCOgCEMoBSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLD8q00N1NRy1A0PLe85QGLe-sRrow"
         alt=""> -->
-            <img src="./img/2.jpg" alt="">
+            <img src="./img/1.jpg" alt="" />
           </div>
         </div>
       </div>
@@ -134,38 +162,47 @@
   </div>
 </body>
 
-<script>
-  let box = document.querySelectorAll('.rotate-box');
-  let items = document.querySelectorAll('.item');
-  let regSpan = document.querySelector('#regSpan');
-  let { height: boxHeight, width: boxWidth } = box[0].getBoundingClientRect();
-  const maxReg = 3;
-  const maxRegX = 1.5;
-  const maxRegY = 3;
-  let multipleY = maxReg / (boxHeight / 2);
-  let multipleX = maxReg / (boxWidth / 2);
+<!-- <script>
+    let box = document.querySelectorAll(".rotate-box");
+    let items = document.querySelectorAll(".item");
+    let regSpan = document.querySelector("#regSpan");
+    let { height: boxHeight, width: boxWidth } = box[0].getBoundingClientRect();
+    const maxReg = 3;
+    let multipleY = maxReg / (boxHeight / 2);
+    let multipleX = maxReg / (boxWidth / 2);
 
+    console.log(multipleX, multipleY);
+    box.forEach((item, index) => {
+      item.addEventListener("mousemove", (e) => {
+        let { offsetX: x, offsetY: y } = e;
+        let xx = x - boxWidth / 2;
+        let yy = y - boxHeight / 2;
 
-  console.log(multipleX, multipleY)
-  box.forEach((item, index) => {
-    item.addEventListener('mousemove', e => {
-      let { offsetX: x, offsetY: y } = e;
-      let xx = x - boxWidth / 2;
-      let yy = y - boxHeight / 2;
+        let rotateX = (xx * multipleX).toFixed(2);
+        let rotateY = -(yy * multipleY).toFixed(2);
 
-      let rotateX = (xx * multipleX).toFixed(2);
-      let rotateY = -(yy * multipleY).toFixed(2);
+        console.log(rotateX, rotateY);
+        items[
+          index
+        ].style.transform = `perspective(700px) rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
+        regSpan.innerText = `rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
+      });
 
-      console.log(rotateX, rotateY);
-      items[index].style.transform = `perspective(700px) rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
-      regSpan.innerText = `rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
-    })
+      item.addEventListener("mouseleave", (e) => {
+        items[
+          index
+        ].style.transform = `perspective(700px) rotateX(0deg) rotateY(0deg)`;
+      });
+    });
+  </script> -->
 
-    item.addEventListener('mouseleave', e => {
-      items[index].style.transform = `perspective(700px) rotateX(0deg) rotateY(0deg)`;
-    })
-  })
+<script type="module">
+  import rotateContainer from './js/index.js'
+  console.log(rotateContainer);
 
+  rotateContainer(document.querySelectorAll('.item'), {
+    multiple: 15
+  });
 </script>
 
 </html>
