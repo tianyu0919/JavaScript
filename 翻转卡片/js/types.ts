@@ -1,6 +1,7 @@
 export type rotateContainerOptionsType = {
   perspective?: number;
   multiple?: number;
+  recoverySpeed?: number;
 };
 
 export interface rotateContainerProps {

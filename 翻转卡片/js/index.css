@@ -1,0 +1,6 @@
+.rotate-wrapper {
+}
+
+.rotate-wrapper>* {
+  will-change: transform;
+}

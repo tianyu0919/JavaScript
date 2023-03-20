@@ -1,20 +1,42 @@
+"use strict";
 /*
  * @Author: tianyu
  * @Date: 2023-03-17 13:36:50
  * @Description:
  */
-let item = document.querySelectorAll(".item");
-const rotateContainer = (selector, options) => {
-    let defaultOptions = {
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var rotateContainer = function (selector, options) {
+    var defaultOptions = {
         perspective: 700,
         multiple: 3,
+        recoverySpeed: 300
     };
-    let newOptions = Object.assign(Object.assign({}, defaultOptions), options);
-    let dom = null;
+    var newOptions = __assign(__assign({}, defaultOptions), options);
+    var dom = null;
     if (typeof selector === "string") {
-        let tempDom = document.querySelectorAll(selector);
+        var tempDom = document.querySelectorAll(selector);
         if (tempDom) {
-            dom = [...tempDom];
+            dom = __spreadArray([], tempDom, true);
         }
     }
     else if (typeof selector === "object" &&
@@ -23,45 +45,56 @@ const rotateContainer = (selector, options) => {
             dom = selector;
         }
         else if (selector instanceof NodeList) {
-            dom = [...selector];
+            dom = __spreadArray([], selector, true);
         }
     }
     if (!dom) {
         throw new Error("No DOM element");
     }
     dom;
-    const { perspective, multiple } = newOptions;
-    function moveFn(ev, domArr, idx = 0) {
+    var perspective = newOptions.perspective, multiple = newOptions.multiple, recoverySpeed = newOptions.recoverySpeed;
+    function moveFn(ev, domArr, idx) {
+        if (idx === void 0) { idx = 0; }
         console.log(ev.clientX);
-        const { left, top, width, height } = domArr[idx].getBoundingClientRect();
-        const x = ev.clientX - left;
-        const y = ev.clientY - top;
-        const boxHeight = height;
-        const boxWidth = width;
-        let xx = x - boxWidth / 2;
-        let yy = y - boxHeight / 2;
-        let multipleY = multiple / (boxHeight / 2);
-        let multipleX = multiple / (boxWidth / 2);
-        let rotateX = (xx * multipleX).toFixed(2);
-        let rotateY = -(yy * multipleY).toFixed(2);
-        domArr[idx].style.transform = `rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
+        var _a = domArr[idx].getBoundingClientRect(), left = _a.left, top = _a.top, width = _a.width, height = _a.height;
+        var x = ev.clientX - left;
+        var y = ev.clientY - top;
+        var boxHeight = height;
+        var boxWidth = width;
+        var xx = x - boxWidth / 2;
+        var yy = y - boxHeight / 2;
+        var multipleY = multiple / (boxHeight / 2);
+        var multipleX = multiple / (boxWidth / 2);
+        var rotateX = (xx * multipleX).toFixed(2);
+        var rotateY = -(yy * multipleY).toFixed(2);
+        domArr[idx].style.transform = "rotateX(".concat(rotateY, "deg) rotateY(").concat(rotateX, "deg)");
     }
-    function leaveFn(ev, domArr, idx = 0) {
-        domArr[idx].style.transform = ``;
+    function leaveFn(ev, domArr, idx) {
+        if (idx === void 0) { idx = 0; }
+        domArr[idx].style.transform = "";
+        recovery(domArr[idx]);
+    }
+    function recovery(dom) {
+        dom.style.transitionDuration = "".concat(recoverySpeed, "ms");
     }
     console.log(dom);
     // * 是个数组
     if (dom && Array.isArray(dom)) {
-        dom.forEach((item, idx) => {
-            item.addEventListener("mousemove", {
-                handleEvent: (ev) => {
+        dom.forEach(function (item, idx) {
+            var _a;
+            var wrapper = document.createElement('div');
+            wrapper.style.cssText = "width: 100%; height: 100%; perspective: ".concat(perspective, "px");
+            (_a = item.parentElement) === null || _a === void 0 ? void 0 : _a.append(wrapper);
+            wrapper.append(item);
+            wrapper.addEventListener("mousemove", {
+                handleEvent: function (ev) {
                     if (dom) {
                         moveFn(ev, dom, idx);
                     }
                 },
             }, true);
-            item.addEventListener("mouseleave", {
-                handleEvent: (ev) => {
+            wrapper.addEventListener("mouseleave", {
+                handleEvent: function (ev) {
                     if (dom) {
                         leaveFn(ev, dom, idx);
                     }
@@ -73,14 +106,14 @@ const rotateContainer = (selector, options) => {
         // * 是个单个的dom
         console.log("once");
         dom.addEventListener("mousemove", {
-            handleEvent: (ev) => {
+            handleEvent: function (ev) {
                 if (dom) {
                     moveFn(ev, [dom]);
                 }
             },
         }, true);
         dom.addEventListener("mouseleave", {
-            handleEvent: (ev) => {
+            handleEvent: function (ev) {
                 if (dom) {
                     leaveFn(ev, [dom]);
                 }
@@ -88,4 +121,4 @@ const rotateContainer = (selector, options) => {
         }, true);
     }
 };
-export default rotateContainer;
+exports.default = rotateContainer;
