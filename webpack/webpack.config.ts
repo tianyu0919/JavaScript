@@ -1,6 +1,7 @@
 import * as path from "path";
 import * as webpack from "webpack";
 import webpackBar from "webpackbar";
+import TerserPlugin from "terser-webpack-plugin";
 console.log("webpack");
 
 const config: webpack.Configuration = {
@@ -15,6 +16,16 @@ const config: webpack.Configuration = {
     library: {
       type: "module",
     },
+  },
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin({
+      terserOptions: {
+        compress: {
+          drop_console: true
+        }
+      }
+    })],
   },
   module: {
     rules: [
@@ -37,7 +48,7 @@ const config: webpack.Configuration = {
                     "postcss-preset-env",
                     {
                       // browsers: '> 0.2% and not dead, last 2 versions, Firefox ESR, Edge > 10, Opera > 10',
-                      stage:0,
+                      stage: 0,
                     },
                   ],
                 ],

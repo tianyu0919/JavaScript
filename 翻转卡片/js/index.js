@@ -1,124 +1,189 @@
-"use strict";
 /*
  * @Author: tianyu
  * @Date: 2023-03-17 13:36:50
  * @Description:
  */
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
-var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
-    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-        if (ar || !(i in from)) {
-            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-            ar[i] = from[i];
-        }
-    }
-    return to.concat(ar || Array.prototype.slice.call(from));
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var rotateContainer = function (selector, options) {
-    var defaultOptions = {
+import "./index.css";
+const rotateContainer = (selector, options) => {
+    let defaultOptions = {
         perspective: 700,
         multiple: 3,
-        recoverySpeed: 300
+        recoverySpeed: 300,
+        resizeDelay: 300, // * 如果需要防抖的话，多少时间 ms
     };
-    var newOptions = __assign(__assign({}, defaultOptions), options);
-    var dom = null;
+    let newOptions = Object.assign(Object.assign({}, defaultOptions), options);
+    let dom = null;
     if (typeof selector === "string") {
-        var tempDom = document.querySelectorAll(selector);
+        let tempDom = document.querySelectorAll(selector);
         if (tempDom) {
-            dom = __spreadArray([], tempDom, true);
+            dom = [...tempDom];
         }
     }
-    else if (typeof selector === "object" &&
-        (selector instanceof Element || selector instanceof NodeList)) {
+    else if (typeof selector === "object" && (selector instanceof Element || selector instanceof NodeList)) {
         if (selector instanceof Element) {
             dom = selector;
         }
         else if (selector instanceof NodeList) {
-            dom = __spreadArray([], selector, true);
+            dom = [...selector];
         }
     }
     if (!dom) {
         throw new Error("No DOM element");
     }
     dom;
-    var perspective = newOptions.perspective, multiple = newOptions.multiple, recoverySpeed = newOptions.recoverySpeed;
-    function moveFn(ev, domArr, idx) {
-        if (idx === void 0) { idx = 0; }
-        console.log(ev.clientX);
-        var _a = domArr[idx].getBoundingClientRect(), left = _a.left, top = _a.top, width = _a.width, height = _a.height;
-        var x = ev.clientX - left;
-        var y = ev.clientY - top;
-        var boxHeight = height;
-        var boxWidth = width;
-        var xx = x - boxWidth / 2;
-        var yy = y - boxHeight / 2;
-        var multipleY = multiple / (boxHeight / 2);
-        var multipleX = multiple / (boxWidth / 2);
-        var rotateX = (xx * multipleX).toFixed(2);
-        var rotateY = -(yy * multipleY).toFixed(2);
-        domArr[idx].style.transform = "rotateX(".concat(rotateY, "deg) rotateY(").concat(rotateX, "deg)");
+    const { perspective, multiple, recoverySpeed, resizeDelay } = newOptions;
+    const domMap = new WeakMap();
+    // * 鼠标放上处理函数
+    function moveFn(ev, ele) {
+        restore(ele);
+        const { left, top, width, height } = ele.getBoundingClientRect();
+        const x = ev.clientX - left;
+        const y = ev.clientY - top;
+        const boxHeight = height;
+        const boxWidth = width;
+        let xx = x - boxWidth / 2;
+        let yy = y - boxHeight / 2;
+        let multipleY = multiple / (boxHeight / 2);
+        let multipleX = multiple / (boxWidth / 2);
+        let rotateX = (xx * multipleX).toFixed(2);
+        let rotateY = -(yy * multipleY).toFixed(2);
+        ele.style.transform = `rotateX(${rotateY}deg) rotateY(${rotateX}deg)`;
     }
-    function leaveFn(ev, domArr, idx) {
-        if (idx === void 0) { idx = 0; }
-        domArr[idx].style.transform = "";
-        recovery(domArr[idx]);
+    // * 鼠标离开处理函数
+    function leaveFn(ev, ele) {
+        ele.style.transform = ``;
+        recovery(ele);
     }
+    // * 鼠标离开之后的元素回归初始状态的过渡效果
     function recovery(dom) {
-        dom.style.transitionDuration = "".concat(recoverySpeed, "ms");
+        console.log(domMap);
+        const domItem = domMap.get(dom);
+        console.log(domItem);
+        if (domItem) {
+            const { timer, transDuration } = domItem;
+            if (!timer) {
+                domMap.set(dom, Object.assign(Object.assign({}, domItem), { timer: setTimeout(() => {
+                        console.log("开始 setTimeout", domItem);
+                        dom.style.transitionDuration = transDuration;
+                        domMap.set(dom, Object.assign(Object.assign({}, domItem), { timer: null, isHover: false }));
+                    }, recoverySpeed) }));
+                dom.style.transitionDuration = `${recoverySpeed}ms`;
+            }
+        }
     }
-    console.log(dom);
+    // * 恢复
+    function restore(dom) {
+        const domItem = domMap.get(dom);
+        if (domItem) {
+            const { timer, transDuration, isHover } = domItem;
+            if (timer) {
+                clearTimeout(timer);
+                dom.style.transitionDuration = transDuration;
+                domMap.set(dom, Object.assign(Object.assign({}, domItem), { timer: null }));
+            }
+            if (!isHover) {
+                const duration = 120;
+                console.log("第一次hover");
+                dom.style.transitionDuration = `${duration}ms`;
+                setTimeout(() => {
+                    dom.style.transitionDuration = transDuration;
+                    domMap.set(dom, Object.assign(Object.assign({}, domItem), { isHover: true }));
+                }, duration);
+            }
+        }
+    }
+    // * 防抖
+    function debounce(delay) {
+        let timer;
+        return (callback = () => { }) => {
+            if (timer)
+                clearTimeout(timer);
+            timer = setTimeout(callback, delay);
+        };
+    }
+    // * 监听父元素宽高变化
+    function ObserveParent(parentEle, wrapper) {
+        const debounceFn = debounce(resizeDelay);
+        if (parentEle) {
+            if (window.ResizeObserver) {
+                const resizeObserver = new ResizeObserver((entries) => {
+                    // * 遍历所有观察到的元素
+                    entries.forEach((entry) => {
+                        // * 处理父元素宽度变化
+                        const { width, height } = entry.contentRect;
+                        console.log(width, height);
+                        // * 使用 防抖重新设置
+                        debounceFn(() => {
+                            console.log("我要执行 resizeObserver了");
+                            wrapper.style.width = `${width}px`;
+                            wrapper.style.height = `${height}px`;
+                        });
+                    });
+                });
+                resizeObserver.observe(parentEle);
+            }
+            else if (window.MutationObserver) {
+                const observer = new MutationObserver((mutationsList, observer) => {
+                    for (let mutation of mutationsList) {
+                        const { target } = mutation;
+                        const { width: newWidth, height: newHeight } = target.getBoundingClientRect();
+                        const { width: oldWidth, height: oldHeight } = wrapper.getBoundingClientRect();
+                        if (oldWidth !== newWidth || oldHeight !== newHeight) {
+                            // * 使用 防抖重新设置
+                            debounceFn(() => {
+                                console.log("我要执行 mutationOBserver了");
+                                wrapper.style.width = `${newWidth}px`;
+                                wrapper.style.height = `${newHeight}px`;
+                            });
+                        }
+                    }
+                });
+                observer.observe(parentEle, {
+                    attributes: true,
+                });
+            }
+        }
+    }
+    // * 初始化
+    function init(item, idx = 0) {
+        var _a;
+        let wrapper = document.createElement("div");
+        wrapper.classList.add("rotate-wrapper");
+        const { width, height } = item.getBoundingClientRect();
+        wrapper.style.cssText = `width: ${width}px; height: ${height}px; perspective: ${perspective}px`;
+        (_a = item.parentElement) === null || _a === void 0 ? void 0 : _a.append(wrapper);
+        ObserveParent(item.parentElement, wrapper);
+        wrapper.append(item);
+        wrapper.addEventListener("mousemove", {
+            handleEvent: (ev) => {
+                if (item) {
+                    moveFn(ev, item);
+                }
+            },
+        });
+        wrapper.addEventListener("mouseleave", {
+            handleEvent: (ev) => {
+                if (item) {
+                    leaveFn(ev, item);
+                }
+            },
+        });
+        domMap.set(item, {
+            isHover: false,
+            timer: null,
+            transDuration: item.style.transitionDuration,
+        });
+    }
     // * 是个数组
     if (dom && Array.isArray(dom)) {
-        dom.forEach(function (item, idx) {
-            var _a;
-            var wrapper = document.createElement('div');
-            wrapper.style.cssText = "width: 100%; height: 100%; perspective: ".concat(perspective, "px");
-            (_a = item.parentElement) === null || _a === void 0 ? void 0 : _a.append(wrapper);
-            wrapper.append(item);
-            wrapper.addEventListener("mousemove", {
-                handleEvent: function (ev) {
-                    if (dom) {
-                        moveFn(ev, dom, idx);
-                    }
-                },
-            }, true);
-            wrapper.addEventListener("mouseleave", {
-                handleEvent: function (ev) {
-                    if (dom) {
-                        leaveFn(ev, dom, idx);
-                    }
-                },
-            }, false);
+        dom.forEach((item, idx) => {
+            init(item, idx);
         });
     }
     else {
         // * 是个单个的dom
         console.log("once");
-        dom.addEventListener("mousemove", {
-            handleEvent: function (ev) {
-                if (dom) {
-                    moveFn(ev, [dom]);
-                }
-            },
-        }, true);
-        dom.addEventListener("mouseleave", {
-            handleEvent: function (ev) {
-                if (dom) {
-                    leaveFn(ev, [dom]);
-                }
-            },
-        }, true);
+        init(dom);
     }
 };
-exports.default = rotateContainer;
+export default rotateContainer;

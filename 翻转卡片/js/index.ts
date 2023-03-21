@@ -9,9 +9,10 @@ import { type rotateContainerOptionsType, type rotateContainerProps, type remove
 
 const rotateContainer: rotateContainerProps = (selector, options) => {
   let defaultOptions: removeOptional<rotateContainerOptionsType> = {
-    perspective: 700,
-    multiple: 3,
-    recoverySpeed: 300,
+    perspective: 700, // * 视距
+    multiple: 3, // * 转换倍数
+    recoverySpeed: 300, // * 鼠标移开时恢复原状的时间 ms
+    resizeDelay: 300, // * 如果需要防抖的话，多少时间 ms
   };
 
   let newOptions = { ...defaultOptions, ...options };
@@ -35,13 +36,12 @@ const rotateContainer: rotateContainerProps = (selector, options) => {
   }
   dom as HTMLElement | NodeList;
 
-  const { perspective, multiple, recoverySpeed } = newOptions;
+  const { perspective, multiple, recoverySpeed, resizeDelay } = newOptions;
 
-  const domTimerMap = new WeakMap<HTMLElement, { origin: string; timer: number }>();
+  const domMap = new WeakMap<HTMLElement, { isHover: boolean; timer: number | null; transDuration: string }>();
 
   // * 鼠标放上处理函数
   function moveFn(ev: MouseEvent, ele: HTMLElement) {
-  // function moveFn(ev: MouseEvent, domArr: HTMLElement[], idx = 0) {
     restore(ele);
     const { left, top, width, height } = ele.getBoundingClientRect();
     const x = ev.clientX - left;
@@ -59,43 +59,115 @@ const rotateContainer: rotateContainerProps = (selector, options) => {
 
   // * 鼠标离开处理函数
   function leaveFn(ev: MouseEvent, ele: HTMLElement) {
-    // function leaveFn(ev: MouseEvent, domArr: HTMLElement[], idx = 0) {
     ele.style.transform = ``;
     recovery(ele);
   }
 
   // * 鼠标离开之后的元素回归初始状态的过渡效果
   function recovery(dom: HTMLElement) {
-    if (!domTimerMap.has(dom)) {
-      const originDuration = dom.style.transitionDuration;
-      domTimerMap.set(dom, {
-        origin: originDuration,
-        timer: setTimeout(() => {
-          console.log(domTimerMap);
-          console.log("开始 setTimeout");
-          dom.style.transitionDuration = originDuration;
-          domTimerMap.delete(dom);
-        }, recoverySpeed),
-      });
+    console.log(domMap);
+    const domItem = domMap.get(dom);
+    console.log(domItem);
+    if (domItem) {
+      const { timer, transDuration } = domItem;
+      if (!timer) {
+        domMap.set(dom, {
+          ...domItem,
+          timer: setTimeout(() => {
+            console.log("开始 setTimeout", domItem);
+            dom.style.transitionDuration = transDuration;
+            domMap.set(dom, { ...domItem, timer: null, isHover: false});
+          }, recoverySpeed),
+        });
+        dom.style.transitionDuration = `${recoverySpeed}ms`;
+      }
     }
-    dom.style.transitionDuration = `${recoverySpeed}ms`;
   }
 
+  // * 恢复
   function restore(dom: HTMLElement) {
-    if (dom && domTimerMap.has(dom)) {
-      const { origin, timer } = domTimerMap.get(dom)!;
-      dom.style.transitionDuration = origin;
-      clearTimeout(timer);
-      domTimerMap.delete(dom);
+    const domItem = domMap.get(dom);
+    if (domItem) {
+      const { timer, transDuration, isHover } = domItem;
+      if (timer) {
+        clearTimeout(timer);
+        dom.style.transitionDuration = transDuration;
+        domMap.set(dom, { ...domItem, timer: null });
+      }
+
+      if (!isHover) {
+        const duration = 120;
+        console.log("第一次hover");
+        dom.style.transitionDuration = `${duration}ms`;
+        setTimeout(() => {
+          dom.style.transitionDuration = transDuration;
+          domMap.set(dom, { ...domItem, isHover: true });
+        }, duration);
+      }
     }
   }
 
+  // * 防抖
+  function debounce(delay: number) {
+    let timer: number;
+    return (callback: () => void = () => {}) => {
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(callback, delay);
+    };
+  }
+
+  // * 监听父元素宽高变化
+  function ObserveParent(parentEle: HTMLElement, wrapper: HTMLDivElement) {
+    const debounceFn = debounce(resizeDelay);
+    if (parentEle) {
+      if (window.ResizeObserver) {
+        const resizeObserver = new ResizeObserver((entries) => {
+          // * 遍历所有观察到的元素
+          entries.forEach((entry) => {
+            // * 处理父元素宽度变化
+            const { width, height } = entry.contentRect;
+            console.log(width, height);
+            // * 使用 防抖重新设置
+            debounceFn(() => {
+              console.log("我要执行 resizeObserver了");
+              wrapper.style.width = `${width}px`;
+              wrapper.style.height = `${height}px`;
+            });
+          });
+        });
+        resizeObserver.observe(parentEle);
+      } else if (window.MutationObserver) {
+        const observer = new MutationObserver((mutationsList, observer) => {
+          for (let mutation of mutationsList) {
+            const { target } = mutation;
+            const { width: newWidth, height: newHeight } = (target as HTMLElement).getBoundingClientRect();
+            const { width: oldWidth, height: oldHeight } = wrapper.getBoundingClientRect();
+            if (oldWidth !== newWidth || oldHeight !== newHeight) {
+              // * 使用 防抖重新设置
+              debounceFn(() => {
+                console.log("我要执行 mutationOBserver了");
+                wrapper.style.width = `${newWidth}px`;
+                wrapper.style.height = `${newHeight}px`;
+              });
+            }
+          }
+        });
+
+        observer.observe(parentEle, {
+          attributes: true,
+        });
+      }
+    }
+  }
+
+  // * 初始化
   function init(item: HTMLElement, idx = 0) {
     let wrapper = document.createElement("div");
     wrapper.classList.add("rotate-wrapper");
     const { width, height } = item.getBoundingClientRect();
     wrapper.style.cssText = `width: ${width}px; height: ${height}px; perspective: ${perspective}px`;
     item.parentElement?.append(wrapper);
+    ObserveParent(item.parentElement!, wrapper);
     wrapper.append(item);
     wrapper.addEventListener("mousemove", {
       handleEvent: (ev: MouseEvent) => {
@@ -110,6 +182,12 @@ const rotateContainer: rotateContainerProps = (selector, options) => {
           leaveFn(ev, item);
         }
       },
+    });
+
+    domMap.set(item, {
+      isHover: false,
+      timer: null,
+      transDuration: item.style.transitionDuration,
     });
   }
 

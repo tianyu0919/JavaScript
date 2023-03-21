@@ -1,4 +1,5 @@
 .rotate-wrapper {
+  cursor: pointer;
 }
 
 .rotate-wrapper>* {

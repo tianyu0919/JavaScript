@@ -13,6 +13,7 @@ specifiers:
   postcss-loader: ^7.1.0
   postcss-preset-env: ^8.0.1
   style-loader: ^3.3.2
+  terser-webpack-plugin: ^5.3.7
   ts-node: ^10.9.1
   typescript: ^5.0.2
   webpack: ^5.76.2
@@ -36,6 +37,7 @@ devDependencies:
   postcss-loader: 7.1.0_6puvukfnwbwq425eep7g4z27be
   postcss-preset-env: 8.0.1_postcss@8.4.21
   style-loader: 3.3.2_webpack@5.76.2
+  terser-webpack-plugin: 5.3.7_webpack@5.76.2
   webpack: 5.76.2_webpack-cli@5.0.1
   webpack-cli: 5.0.1_webpack@5.76.2
   webpackbar: 5.0.2_webpack@5.76.2
