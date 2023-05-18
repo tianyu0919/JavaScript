@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+  <h1>Hello World</h1>
+  <button>change</button>
+
+  <script>
+    var h1 = document.querySelector('h1');
+    var btn = document.querySelector('button');
+
+    // * 死循环指定时间
+    function delay(duration) {
+      var start = Date.now();
+      while (Date.now() - start < duration) {
+
+      }
+    }
+
+    btn.onclick = function () {
+      h1.textContent = '你好世界';
+      delay(3000);
+    }
+  </script>
+</body>
+
+</html>
