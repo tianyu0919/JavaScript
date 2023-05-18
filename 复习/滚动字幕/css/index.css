@@ -1,0 +1,42 @@
+body {
+  margin: 0px;
+  background-color: #000;
+}
+
+#container {
+  width: 700px;
+  margin: 0px auto;
+  padding: 10px 0px;
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+audio {
+  width: 100%;
+}
+
+#container .lrcContainer {
+  overflow: hidden;
+  height: 90%;
+}
+
+#container .lrcList {
+  list-style: none;
+  transition: transform .3s;
+}
+
+.lrcList li {
+  color: #707070;
+  line-height: 23px;
+  text-align: center;
+}
+
+.lrcList li+li {
+  margin-top: 12px;
+}
+
+.lrcList li.active {
+  color: #fff;
+  transform: scale(1.4);
+  transition: color .3s, transform .3s;
+}
