@@ -1,0 +1,178 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+  <style>
+    body {
+      margin: 0px;
+
+    }
+
+    ul {
+      list-style: none;
+    }
+
+    #container {
+      border: 1px solid #ccc;
+      width: 500px;
+      margin: 20px auto;
+    }
+
+    #shopping {}
+
+    #shopping li {
+      border: 1px solid blue;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      height: 50px;
+    }
+
+    #shopping li+li {
+      margin-top: 20px;
+    }
+
+    #shopping li span {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      background: red;
+      color: yellow;
+      text-align: center;
+      cursor: pointer;
+      line-height: 20px;
+    }
+
+    #shoppingCartContainer {
+      margin-top: 20px;
+      display: inline-block;
+      vertical-align: bottom;
+    }
+
+    #cart {
+      height: 50px;
+      width: 50px;
+      border: 1px solid pink;
+    }
+
+    #round {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background-color: green;
+      animation: toLeft .5s cubic-bezier(0.75, 0.82, 1, 1) forwards, toBottom .5s cubic-bezier(0.75, -1.12, 1, 1) forwards;
+      pointer-events: none;
+    }
+
+    @keyframes toLeft {
+      0% {
+        /* transform: translateX(var(--ls)); */
+        left: var(--ls);
+      }
+
+      100% {
+        /* transform: translateX(var(--le)); */
+        left: var(--le);
+      }
+    }
+
+    @keyframes toBottom {
+      0% {
+        /* transform: translateY(var(--ts)); */
+        top: var(--ts);
+      }
+
+      100% {
+        /* transform: translateY(var(--te)); */
+        top: var(--te);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="container">
+    <ul id="shopping">
+      <li>
+        <span>+</span>
+      </li>
+      <li>
+        <span>+</span>
+      </li>
+      <li>
+        <span>+</span>
+      </li>
+      <li>
+        <span>+</span>
+      </li>
+      <li>
+        <span>+</span>
+      </li>
+      <li>
+        <span>+</span>
+      </li>
+    </ul>
+    <div id="shoppingCartContainer">
+      <div id="cart"></div>
+    </div>
+  </div>
+
+  <script>
+    let cart = document.querySelector('#cart');
+
+    const oli = document.querySelectorAll('#shopping li span');
+
+    oli.forEach(item => {
+      item.addEventListener('click', ev => {
+        const {
+          target: {
+            offsetLeft: l,
+            offsetTop: t
+          }
+        } = ev;
+        // console.dir(ev.target);
+        // const l = ev.target.getBoundingClientRect().left;
+        // const t = ev.target.getBoundingClientRect().top;
+
+        console.log(l, t);
+        setAnimate(l, t)
+      })
+    })
+
+    function setAnimate(ls, ts) {
+      const {
+        offsetLeft,
+        offsetTop,
+        clientWidth,
+        clientHeight
+      } = cart;
+
+      const le = offsetLeft + clientWidth / 2 - 10;
+      const te = offsetTop + clientHeight / 2 - 10;
+
+      const round = document.createElement('div');
+      round.id = 'round';
+      round.style.cssText = `left: ${ls}px; top: ${ts}px;`
+
+      round.style.setProperty('--ls', `${ls}px`);
+      round.style.setProperty('--ts', `${ts}px`);
+      round.style.setProperty('--le', `${le}px`);
+      round.style.setProperty('--te', `${te}px`);
+
+      document.body.appendChild(round);
+
+      setTimeout(() => {
+        document.body.removeChild(round);
+      }, 500)
+    }
+  </script>
+</body>
+
+</html>

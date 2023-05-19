@@ -107,14 +107,16 @@ function setTransform(idx) {
  * @returns 返回字幕字符串
  */
 function fetchLrc() {
-  return fetch('/复习/滚动字幕/assets/shadowOfTheSun.lrc').then(res => {
-    return res.text();
-  }).then(res => {
-    return res;
-  })
+  return fetch("/复习/滚动字幕/assets/shadowOfTheSun.lrc")
+    .then((res) => {
+      return res.text();
+    })
+    .then((res) => {
+      return res;
+    });
 }
 
-/** 
+/**
  * 初始化
  */
 async function init() {
@@ -130,6 +132,18 @@ async function init() {
     addClass(idx, [...dom.lrcList.children]);
     setTransform(idx);
   });
+  play();
 }
 
 init();
+
+async function play() {
+  dom.audio.muted = true;
+  dom.audio.play();
+  const audioCtx = new AudioContext();
+  const canAutoPlay = audioCtx.state === "running";
+  audioCtx.close();
+  if (canAutoPlay) {
+    dom.audio.muted = false;
+  }
+}
