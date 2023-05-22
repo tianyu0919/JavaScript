@@ -1,0 +1,199 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+
+</body>
+
+<script>
+  // * 例子
+  (function () {
+    const obj = {
+      a: 1,
+      b: 2
+    }
+
+    const des = Object.getOwnPropertyDescriptor(obj, 'a'); // * 获得一个对象的属性描述符
+
+    console.log(des);
+
+    // * 修改属性描述符
+    Object.defineProperty(obj, 'a', {
+      value: 10, // * 修改值
+      enumerable: false, // * 不可枚举(遍历)
+      writable: false, // * 不可重写
+      configurable: true, // * 描述符本身能不能再修改
+    });
+
+    console.log(Object.keys(obj))
+
+    class UIGoods {
+      constructor(g) {
+        this.data = g;
+      }
+
+      set data(val) {
+        console.log(val)
+      }
+
+      get data() {
+        return 'xx'
+      }
+    }
+
+    const g = new UIGoods(obj);
+    // g.data = 1
+
+    console.log(g)
+
+
+    // 第二种做法
+    class UIGoods1 {
+      constructor(g) {
+        // getter 和 setter 整体称为访问器
+        Object.defineProperty(this, 'data', {
+          get() { // 访问器 getter
+            return g;
+          },
+          set(val) { // 设置器 setter
+            throw new Error('不可修改')
+          }
+        })
+      }
+
+      // set data(val) {
+      //   throw new Error('不可修改')
+      // }
+
+      // get data() {
+      //   return 'xx'
+      // }
+    }
+
+    const obj2 = {
+      a: 1
+    }
+
+    Object.defineProperty(obj2, 'a', { // * 如果只写了 get 没写 set 表示 set 是无效的
+      get() {
+        return 'xx'
+      }
+    })
+
+    // * 冻结属性，冻结之后所有的属性都不能修改，也不能添加新的属性
+    Object.freeze();
+
+    // * 密封属性，密封之后所有的属性可以修改，但是不能添加新的属性
+    Object.seal();
+  })();
+
+  // * 使用 Object.freeze 冻结属性
+  (function () {
+    console.group('Object.freeze');
+    let obj = {
+      name: 'John',
+      age: 30
+    }
+    // 设置之前，先看原先是什么样子的
+    const des = Object.getOwnPropertyDescriptor(obj, 'age');
+    console.log(des);
+    Object.freeze(obj);
+    // 查看设置之后的描述符信息
+    const des1 = Object.getOwnPropertyDescriptor(obj, 'age');
+    console.log(des1);
+    console.log(obj);
+    // * 设置新值
+    obj.sex = 'man'; // * ❌ 设置不上
+    obj.name = 'Asom' // * ❌ 设置不上
+
+
+
+    // * 尝试修改属性描述符信息
+    try {
+      let name = obj.name;
+      Object.defineProperty(obj, 'name', {
+        writable: true,
+      })
+    } catch (err) {
+      console.log('修改属性描述符信息报错', err) // * 最终会报错，告诉你不可以重新设置属性描述符
+    }
+    // * 尝试修改访问器属性
+    try {
+      let name = obj.name;
+      Object.defineProperty(obj, 'name', {
+        get() {
+          return name;
+        },
+        set(val) {
+          name = val;
+        }
+      })
+    } catch (err) {
+      console.log('修改访问器属性报错', err) // * 最终会报错，告诉你不可以重新设置属性描述符
+    }
+
+    console.log(obj);
+    console.groupEnd();
+  })();
+
+  // * 使用 Object.seal 密封属性
+  (function () {
+    console.group('Object.seal');
+    const obj = {
+      name: 'sitak',
+      age: 39
+    };
+    // 设置之前，先看原先是什么样子的
+    const des = Object.getOwnPropertyDescriptor(obj, 'age');
+    console.log(des);
+
+    Object.seal(obj);
+
+    // * 设置新值
+    obj.sex = 'man'; // ❌ 设置不上新值
+
+    // * 修改原值
+    obj.age += 1; // * ✅ 可以修改原先的值
+
+    // * 使用属性描述符修改
+    try {
+      let age = obj.age;
+      Object.defineProperty(obj, 'age', {
+        get() {
+          return age;
+        },
+        set(val) {
+          age = val
+        }
+      })
+    } catch (err) {
+      console.log('设置访问器属性出错了', err); // * 报错设置不了
+    }
+
+    // * 设置描述符呢？
+    try {
+      Object.defineProperty(obj, 'age', {
+        writable: false
+      })
+    } catch (err) {
+      console.log('设置属性描述符出错了', err); // * 报错设置不了
+    }
+    console.log(obj);
+    console.log(Object.keys(obj));
+    const des1 = Object.getOwnPropertyDescriptor(obj, 'age');
+    console.log(des1);
+    console.groupEnd();
+  })();
+</script>
+
+</html>
