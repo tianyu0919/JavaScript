@@ -17,26 +17,43 @@
   <style>
     body {
       margin: 0;
+    }
 
-      #root {
-        width: 50%;
-        min-width: 500px;
-        margin: 20px auto;
-        padding: 20px;
-        box-sizing: border-box;
-        border: 1px solid rgb(67, 72, 223);
+    #root {
+      width: 50%;
+      min-width: 500px;
+      margin: 20px auto;
+      padding: 20px;
+      box-sizing: border-box;
+      border: 1px solid rgb(67, 72, 223);
+    }
+
+    p {
+      &+p {
+        margin-top: 20px;
       }
     }
   </style>
-  <script src="./js/customVue.js" defer></script>
+  <!-- <script src="./js/custom1.js" defer></script> -->
+  <!-- <script src="./js/customVue.js" defer></script> -->
+  <script src="./js/euv.js" defer></script>
 </head>
 
 <body>
   <div id="root">
-    <p>姓：[[name]]</p>
-    <p>名：[[lastName]]</p>
-    <p>年龄：[[age]]</p>
+    <p class="name"></p>
+    <p class="birth"></p>
+    <p class="sex"></p>
+    <div>
+      <input type="text" oninput="person.name = this.value" />
+      <input type="date" onchange="person.birth = this.value" />
+      <select onchange="person.sex = this.value">
+        <option value="男">男</option>
+        <option value="女">女</option>
+      </select>
+    </div>
   </div>
+
 </body>
 
 </html>

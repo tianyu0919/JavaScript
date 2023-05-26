@@ -4,8 +4,14 @@ class CustomVue {
     console.log(el);
     let html = document.querySelector(el)?.innerHTML;
     console.log(html);
+    const reg = /\[\[(?<tag>.*)\]\]/gi;
+    html.replaceAll(reg, (...arg) => {
+      console.log(arg);
+    });
+  }
 
-    /\[\[(?<tag>.*)\]\]/ig.test()
+  renderText() {
+
   }
 
   constructor(options) {
@@ -17,10 +23,10 @@ class CustomVue {
 let vue = new CustomVue({
   el: "#root",
   data: {
-    name: 'xx',
-    lastName: 'yy',
-    age: 18
-  }
+    name: "xx",
+    lastName: "yy",
+    age: 18,
+  },
 });
 
 console.log(vue);
