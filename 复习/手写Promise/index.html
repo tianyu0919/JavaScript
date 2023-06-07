@@ -1,0 +1,72 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <script src="index.js"></script>
+  <title>网页标题</title>
+</head>
+
+<body>
+  <h2>自定义Promise</h2>
+</body>
+
+<script>
+  // const p1 = new MyPromise((res, rej) => {
+  //   setTimeout(() => {
+  //     rej(123);
+  //   }, 1000);
+  // });
+
+  // p1.then(
+  //   (res) => {
+  //     console.log(`成功了1：${res}`);
+  //   },
+  //   (err) => {
+  //     console.log(`失败了1：${err}`);
+  //   }
+  // );
+  // p1.then((res) => {
+  //   console.log(`成功了2：${res}`);
+  // });
+  // p1.then(
+  //   (res) => {
+  //     console.log(`成功了3：${res}`);
+  //   },
+  //   (err) => {
+  //     console.log(`失败了3：${err}`);
+  //   }
+  // );
+  setTimeout(() => {
+    console.log(1);
+  }, 0);
+  new MyPromise((resolve, reject) => {
+    resolve();
+  }).then((res) => {
+    console.log(2);
+  });
+  console.log(3);
+
+
+  // const p2 = new MyPromise((res, rej) => {
+  //   setTimeout(() => {
+  //     res(1);
+  //   }, 1000)
+  // }).then((data) => {
+  //   return new MyPromise((resolve) => {
+  //     setTimeout(() => {
+  //       resolve(data * 2);
+  //     }, 1000)
+  //   })
+  // }).then(res => {
+  //   console.log('yy')
+  //   console.log(res)
+  // })
+</script>
+
+</html>
