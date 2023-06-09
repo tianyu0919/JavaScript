@@ -26,5 +26,28 @@
   <h2>继承</h2>
 </body>
 
+<script>
+  // 1. 创建一个创建元素的函数，addELement(TagName, options): Element
+  function addElement(TagName, options) {
+    const ele = document.createElement(TagName);
+
+    const keys = Object.keys(options);
+
+    keys.forEach((item) => {
+      ele.setAttribute(item, options[item]);
+    })
+    return ele;
+  }
+  // 2. 懒加载的实现
+  //  2.1 自己写scroll事件，判断滚动条的位置，并计算当前元素出现的高度。替换 data-src 自定义属性。
+  //  2.2 new IntersectionObserver(callback, options)
+  
+  // 3. webpack 的实现原理是什么？以及基本使用，常用的属性，例如 entry module 之类的.
+  // 4. node 的基本使用。服务怎么启动？路由怎么配置（路径返回资源）？
+  // 5. vue2，vue3的实现原理，他俩的区别是什么？
+  // 6. vuex的实现原理？
+  // 7. vue 和 React 的区别是什么？
+</script>
+
 
 </html>
