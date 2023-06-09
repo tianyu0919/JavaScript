@@ -117,14 +117,49 @@ class MyPromise {
       this.#run();
     });
   }
-}
 
-setTimeout(() => {
-  console.log(1);
-}, 0);
-new MyPromise((resolve, reject) => {
-  resolve();
-}).then((res) => {
-  console.log(2);
-});
-console.log(3);
+  // * 5.新增 catch 方法
+  catch(onRejected) {
+    return this.then(_, onRejected);
+  }
+
+  // * 5.新增 finally 方法
+  finally(onFinally) {
+    return this.then(
+      (data) => {
+        onFinally();
+        return data;
+      },
+      (err) => {
+        onFinally();
+        throw err;
+      }
+    );
+  }
+
+  // * 5.新增 resolve 方法
+  static resolve(value) {
+    if (value instanceof MyPromise) return value;
+    let _resolve, _reject;
+    const p = new MyPromise((resolve, reject) => {
+      _resolve = resolve;
+      _reject = reject;
+    });
+    // * 5.如果是个 thenable(有then方法的就是)，则将 _resolve，_reject 传递进去。
+    if (p.#isPromiseLike(value)) {
+      return value.then(_resolve, _reject);
+    } else {
+      // * 5.如果是个普通的值，直接通过 _resolve 返回。
+      _resolve(value);
+    }
+
+    return p;
+  }
+
+  // * 5.新增 reject 方法
+  static reject(reason) {
+    return new MyPromise((resolve, reject) => {
+      reject(reason);
+    })
+  }
+}
