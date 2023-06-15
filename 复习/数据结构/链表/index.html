@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  class Item {
+    constructor(value, next) {
+      this.value = value;
+      this.next = next;
+    }
+  }
+
+  let Instance = null;
+  let Item1 = new Item(1);
+  let Item2 = new Item(2);
+  let Item3 = new Item(3);
+  Item1.next = Item2;
+  Item2.next = Item3;
+  // for (let i = 0; i < 5; i++) {
+  //   if (Instance) {
+  //     Instance.next = new Item(`我是${i}`);
+  //   }
+  // }
+  console.log(Item1);
+</script>
+
+</html>
