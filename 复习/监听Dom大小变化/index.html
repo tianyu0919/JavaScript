@@ -27,7 +27,7 @@
   <h1>监听dom大小变动</h1>
   <p>我是p标签</p>
   <div>我是div标签</div>
-  <input type="checkbox" />
+  <label><input type="checkbox" />是否监听</label>
   <input type="range" />
 </body>
 
@@ -41,7 +41,7 @@
   divElem.style.width = '600px';
 
   slider.addEventListener('input', () => {
-    divElem.style.width = `${slider.value}px`;
+    divElem.style.width = `${slider.value}%`;
   })
 
   const resizeObserver = new ResizeObserver((entries) => {
