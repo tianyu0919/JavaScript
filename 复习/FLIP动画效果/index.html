@@ -1,0 +1,109 @@
+<!--
+ * @Author: tianyu
+ * @Date: 2023-06-29 16:31:54
+ * @Description: 
+-->
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+  <style>
+    /* * {
+      margin: 0;
+    } */
+
+    ul,
+    li {
+      list-style: none;
+    }
+
+    ul {
+      padding: 6px;
+      border: 1px solid #ccc;
+      width: 100px;
+    }
+
+    ul li {
+      padding: 6px;
+    }
+
+    ul .first {
+      background-color: red;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+  <button id="btn">点击排序</button>
+  <ul>
+    <li class="first">HTML</li>
+    <li>CSS</li>
+    <li>JavaScript</li>
+    <li>TypeScript</li>
+    <li>Webpack</li>
+    <li>NodeJS</li>
+  </ul>
+</body>
+
+<script>
+  const oBtn = document.querySelector('#btn');
+  const oUl = document.querySelector('ul');
+  const aLi = [...document.querySelectorAll('li')];
+
+  function getLocation(dom, property) {
+    return dom.getBoundingClientRect()[property];
+  };
+
+  oBtn.addEventListener('click', () => {
+    const weakMap = new WeakMap();
+
+    aLi.map(item => {
+      const top = getLocation(item, 'top')
+      weakMap.set(item, top)
+      return top;
+    });
+
+    aLi.reverse();
+
+    console.log(aLi);
+    aLi.forEach(item => {
+      oUl.insertBefore(item, null);
+      console.log(item);
+      setTimeout(() => {
+        console.log(weakMap.get(item), getLocation(item, 'top'))
+        item.style.cssText = `transform: translateY(${weakMap.get(item) - getLocation(item,
+        'top')}px);transition: all .3s`
+        raf(() => {
+          console.log('xx')
+          // item.style.transition = `transform 1s`;
+          // item.style.removeProperty('transform');
+          // item.style.cssText = `transform: translateY(0px);transition: all .3s`
+        })
+      }, 100)
+      // item.style.cssText =
+      // `transition: all .3s; transform: translateY(${weakMap.get(item) - getLocation(item, 'top')}px)`
+    })
+
+  });
+
+  function delay(duration = 1000) {
+    const start = Date.now();
+    while (Date.now() - start < duration) {}
+  }
+
+  function raf(callback) {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(callback);
+    });
+  }
+</script>
+
+</html>
