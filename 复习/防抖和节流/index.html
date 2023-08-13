@@ -27,13 +27,37 @@
   let ThrottleBtn = document.querySelector('#Throttle');
 
   function callback(desc = "") {
-    return () => {
+    return function () {
+      console.log(this);
       console.log(`${desc}函数运行了`);
     }
   }
 
-  DebounceBtn.addEventListener('click', DebounceFn(callback('防抖')));
-  ThrottleBtn.addEventListener('click', ThrottleFn(callback('节流')));
+  DebounceBtn.addEventListener('click', Debounce(callback('防抖')));
+  ThrottleBtn.addEventListener('click', Throttle(callback('节流')));
+
+  function Debounce(fn, delay = 600) {
+    let timer = null;
+    return function (_) {
+      if (timer) {
+        clearTimeout(timer);
+      }
+      timer = setTimeout(() => {
+        fn.apply(this, arguments)
+      }, delay);
+    }
+  }
+
+  function Throttle(fn, delay = 600) {
+    let last = 0;
+    return function () {
+      let now = +Date.now();
+      if (now - last > delay) {
+        last = +Date.now();
+        fn.apply(this, arguments);
+      }
+    }
+  }
 
   // 节流
   function ThrottleFn(fn, interval = 600) {
