@@ -1,0 +1,109 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>手写Axios</title>
+  <!-- <script src="./package/index.js" type="text/javascript" /> -->
+</head>
+
+<body>
+  <button id="btn-get">请求Get</button>
+  <button id="btn-post">请求Post</button>
+</body>
+
+<script type="module">
+  import Axios from './package/index.js';
+  const controller = new AbortController();
+
+  const axios = new Axios({
+    baseUrl: '',
+    // baseUrl: 'https://randomuser.me',
+    abort: controller.signal
+  });
+
+  const btnGet = document.querySelector('#btn-get');
+  const btnPost = document.querySelector('#btn-post');
+
+  function axiosWithCancel(config) {
+    var xhr = new XMLHttpRequest();
+    var controller = new AbortController();
+    var signal = controller.signal;
+
+    xhr.open(config.method || 'GET', config.url, true);
+
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          config.onSuccess && config.onSuccess(xhr.response);
+        } else {
+          config.onError && config.onError(xhr.statusText);
+        }
+      }
+    };
+
+    xhr.onerror = function () {
+      config.onError && config.onError(xhr.statusText);
+    };
+
+    // 添加取消请求的方法
+    function cancel() {
+      // controller.abort();
+      xhr.abort();
+    }
+
+    xhr.send(config.data);
+
+    return {
+      cancel: cancel
+    };
+  }
+
+  btnGet.addEventListener('click', (e) => {
+    axios.get('https://randomuser.me/api/').then((res) => {
+      console.log('get response');
+      console.log(res);
+    }).catch(err => {
+      console.log('报错了');
+      console.log(err);
+    })
+
+  })
+
+  btnPost.addEventListener('click', (e) => {
+    var request = axiosWithCancel({
+      url: 'http://localhost:3000/api',
+      method: 'POST',
+      onSuccess: function (response) {
+        console.log('Request successful:', response);
+      },
+      onError: function (error) {
+        console.log('Request error:', error);
+      }
+    });
+    // axios.post('http://localhost:3000/api', {
+    //   name: '卢天宇'
+    // }).then((res) => {
+    //   console.log('get response');
+    //   console.log(res);
+    // }).catch(err => {
+    //   console.log('报错了');
+    //   console.log(err);
+    // })
+
+    setTimeout(() => {
+      console.log('取消了');
+      request.cancel();
+      // controller.abort();
+    }, 1000)
+
+  })
+
+</script>
+
+</html>
