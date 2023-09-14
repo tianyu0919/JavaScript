@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+
+  <script>
+
+    /**
+     * 
+     * 2023年9月14日美团2面
+     * Q:获取 url 中的参数
+     * 
+     * 1.指定参数名称，返回该参数的值 或者 空字符串
+     * 2.不指定参数名称，返回全部的参数对象 或者空字符串
+     * 3.如果存在多个同名参数，则返回数组
+     * 4.不支持URLSearchParams方法
+     * 
+     */
+    function getUrlParam(sUrl, sKey) {
+      if (sUrl) {
+        let tempUrl = sUrl.split('?')[1];
+        if (tempUrl.indexOf('#') !== -1) {
+          tempUrl = tempUrl.split('#')[0];
+        }
+        const map = new Map();
+        tempUrl.split('&').forEach(item => {
+          const [urlKey, urlValue] = item.split('=');
+          if (!map.get(urlKey)) {
+            map.set(urlKey, []);
+          }
+
+          map.get(urlKey).push(urlValue || '');
+        });
+
+        if (sKey) {
+          const result = map.get(sKey);
+          
+          return result.length > 1 ? result : result[0];
+        }
+        return Object.fromEntries(map);
+      }
+      return {};
+    }
+
+    const url = 'http://www.baidu.com?name=李四&name=张三&age=18&sex=男#/example';
+    const data = getUrlParam(url, 'name');
+    console.log(data);
+  </script>
+</body>
+
+</html>

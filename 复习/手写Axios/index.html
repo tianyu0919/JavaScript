@@ -104,6 +104,27 @@
 
   })
 
+
+  function promise() {
+    // return new Promise((resolve) => {
+    //   setTimeout(() => resolve(100), 3000);
+    // })
+
+    return {
+      then: () => {
+        return 100;
+      }
+    }
+  }
+
+  async function delayFn() {
+    console.log('请求了')
+    const result = await promise();
+    console.log(result);
+  }
+
+  delayFn()
+
 </script>
 
 </html>
