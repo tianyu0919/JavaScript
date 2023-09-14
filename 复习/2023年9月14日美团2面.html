@@ -27,7 +27,7 @@
      * 
      */
     function getUrlParam(sUrl, sKey) {
-      if (sUrl) {
+      if (sUrl && sUrl.indexOf('?') !== -1) {
         let tempUrl = sUrl.split('?')[1];
         if (tempUrl.indexOf('#') !== -1) {
           tempUrl = tempUrl.split('#')[0];
