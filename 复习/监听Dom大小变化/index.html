@@ -1,0 +1,76 @@
+<!--
+ * @Author: tianyu
+ * @Date: 2023-06-27 11:20:46
+ * @Description: 
+-->
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+  <style>
+    div {
+      width: 90%;
+      height: 200px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>监听dom大小变动</h1>
+  <p>我是p标签</p>
+  <div>我是div标签</div>
+  <label><input type="checkbox" />是否监听</label>
+  <input type="range" />
+</body>
+
+<script>
+  const h1Elem = document.querySelector('h1');
+  const pElem = document.querySelector('p');
+  const divElem = document.querySelector('body > div');
+  const slider = document.querySelector('input[type="range"]');
+  const checkbox = document.querySelector('input[type="checkbox"]');
+
+  divElem.style.width = '600px';
+
+  slider.addEventListener('input', () => {
+    divElem.style.width = `${slider.value}%`;
+  })
+
+  const resizeObserver = new ResizeObserver((entries) => {
+    console.log(entries);
+    for (const entry of entries) {
+      if (entry.contentBoxSize) {
+        // Firefox implements `contentBoxSize` as a single content rect, rather than an array
+        const contentBoxSize = Array.isArray(entry.contentBoxSize) ? entry.contentBoxSize[0] : entry.contentBoxSize;
+
+        h1Elem.style.fontSize = `${Math.max(1.5, contentBoxSize.inlineSize / 200)}rem`;
+        pElem.style.fontSize = `${Math.max(1, contentBoxSize.inlineSize / 600)}rem`;
+      } else {
+        h1Elem.style.fontSize = `${Math.max(1.5, entry.contentRect.width / 200)}rem`;
+        pElem.style.fontSize = `${Math.max(1, entry.contentRect.width / 600)}rem`;
+      }
+    }
+
+    console.log('Size changed');
+  });
+
+  resizeObserver.observe(divElem);
+
+  checkbox.addEventListener('change', () => {
+    if (checkbox.checked) {
+      resizeObserver.observe(divElem);
+    } else {
+      resizeObserver.unobserve(divElem);
+    }
+  });
+</script>
+
+</html>
