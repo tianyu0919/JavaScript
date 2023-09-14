@@ -27,11 +27,23 @@
      * 
      */
     function getUrlParam(sUrl, sKey) {
+      // const reg = /(?(?=.+#)([?](.+)(?=#))|([?](.+))(?=['|"]))/g; // js 不支持这种写法
       if (sUrl && sUrl.indexOf('?') !== -1) {
-        let tempUrl = sUrl.split('?')[1];
-        if (tempUrl.indexOf('#') !== -1) {
-          tempUrl = tempUrl.split('#')[0];
+        const reg1 = /\?(.+)/;
+        const match = sUrl.match(reg1);
+
+        // * 没有匹配到直接返回空对象，例如 'http://www.baidu.com?'
+        if (!match) {
+          return {};
         }
+
+        let tempUrl = match[1];
+
+        // * 判断是否有#，如果有的话，获得#号之前的值
+        if (tempUrl.indexOf('#') > -1) {
+          tempUrl = tempUrl.match(/.+(?=#)/)[0]; // * 也可以使用split，也可以使用match
+        }
+
         const map = new Map();
         tempUrl.split('&').forEach(item => {
           const [urlKey, urlValue] = item.split('=');
@@ -42,18 +54,23 @@
           map.get(urlKey).push(urlValue || '');
         });
 
+        // * 如果有指定要查询的参数名，返回对应的数据。
         if (sKey) {
-          const result = map.get(sKey);
-          
-          return result.length > 1 ? result : result[0];
+          const result = map.get(sKey) || []; // * 这里解决如果map中没有存入的字段，那么返回空数组
+
+          // * 如果得到的结果数量大于1，那么返回所有数据，否则返回第一个，如果都没有那么返回一个空的字符串
+          return result.length > 1 ? result : result[0] || '';
         }
+        // * 没有指定的话，返回所有的数据。
         return Object.fromEntries(map);
       }
       return {};
     }
 
-    const url = 'http://www.baidu.com?name=李四&name=张三&age=18&sex=男#/example';
-    const data = getUrlParam(url, 'name');
+    let url = 'http://www.baidu.com?name=李四&name=张三&age=18&sex=男#/example';
+    url = 'http://www.baidu.com?name=李四&name=张三&age=18&sex=男';
+    // url = 'http://www.baidu.com?name';
+    const data = getUrlParam(url, '');
     console.log(data);
   </script>
 </body>
