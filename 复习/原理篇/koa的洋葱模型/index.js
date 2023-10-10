@@ -17,21 +17,32 @@ class TaskPro {
   }
 
   run() {
-    if (this.#isRunning) {
+    if (this.#isRunning || !this.#list.length) {
       return;
     }
     this.#isRunning = true;
     this.#runTask();
   }
 
-  next() {
-    this.#runTask()
+  async next() {
+    // console.log(this.#idx, 'next');
+    if (this.#idx < this.#list.length) {
+      this.#idx++;
+      await this.#runTask()
+    } else {
+      console.log("Task running done")
+    }
   }
 
-  #runTask() {
+  async #runTask() {
     const task = this.#list[this.#idx];
-    this.#idx++;
-    task(this.next.bind(this));
+    const i = this.#idx;
+    await task(this.next.bind(this));
+    if (i === this.#idx) {
+      this.next();
+    }else {
+      console.log('Task cancelled')
+    }
   }
 }
 
@@ -39,13 +50,17 @@ const t = new TaskPro();
 
 t.addTask(async (next) => {
   console.log(1, 'start');
-  next();
+  await next();
   console.log(1, 'end');
 })
 
 t.addTask((next) => {
-  console.log(2);
-  next();
+  return new Promise((res, rej) => {
+    setTimeout(() => {
+      console.log(2);
+      res('成功了')
+    }, 1000)
+  })
 })
 
 t.addTask(() => {
