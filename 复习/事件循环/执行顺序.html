@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+
+</body>
+
+<script>
+  console.log(1);
+
+  setTimeout(() => {
+    console.log(2);
+  }, 0)
+
+  new Promise((res) => {
+    res()
+  }).then(res => {
+    console.log(3);
+  })
+
+  requestAnimationFrame(() => {
+    console.log(4);
+  })
+
+  async function hello() {
+    console.log(5);
+    await Promise.resolve();
+    console.log(6);
+  };
+
+  hello();
+
+  /*
+    宏任务队列(Macro Task Queue)：const MacroTaskQueue = []
+    微任务队列(Micro Task Queue)：const MicroTaskQueue = []
+
+    1. 先执行同步任务，打印1
+    2. 遇到宏任务，将setTimeout添加到宏任务队列，MacroTaskQueue = [() => console.log(2)]
+    3. new Promise((res) => {
+         res(); // 此处是同步任务
+       }).then(res => {
+         console.log(3); // 此处是微任务，添加到微任务队列 MicroTaskQueue = [() => console.log(3)];
+       })
+    4. requestAnimationFrame是宏任务，添加到宏任务队列 MacroTaskQueue = [() => console.log(2), () => console.log(4)]
+    5. async hello() {} 表示是一个异步函数，但是遇到 await 关键字之前还是同步任务。所以打印 5，接着遇到了 await Promise.resolve() 是一个微任务，所以添加到微任务队列 MicroTaskQueue = [() => console.log(3), () => Resolve()];
+ 
+    执行过程，首先打印同步任务的1
+    然后打印同步任务的5
+    然后打印微任务的3
+    在打印微任务之后同步任务的6
+    然后打印宏任务2
+    在打印宏任务4
+    为什么同为宏任务，先打印2在打印4呢？因为requestAnimationFrame将在时间循环结束，重新绘制之前执行。所以，本轮事件循环已经结束了，在浏览器重绘之前打印了4
+    所以结果是 1 5 3 6 2 4
+  */
+</script>
+
+</html>
