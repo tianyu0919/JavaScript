@@ -1,0 +1,57 @@
+<!--
+ * @Author: 卢天宇
+ * @Date: 2023-12-02 01:08:56
+ * @Description: 
+-->
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no" />
+  <meta name="description" content="网站的描述内容。" />
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta name="Author" content="归宿" />
+  <meta name="Keywords" content="关键字" />
+  <title>网页标题</title>
+</head>
+
+<body>
+  <button>点击</button>
+</body>
+
+<script>
+  function getElement(selector) {
+    // 获取指定选择器的元素
+    const el = document.querySelector(selector)
+    // 创建代理对象
+    const proxy = new Proxy(el, {
+      get(target, key) {
+        // 如果属性名不以'wait'开头，则返回原始属性值
+        if (!key.startsWith('wait')) {
+          return Reflect.get(target, key)
+        }
+        // 如果属性名以'wait'开头，则返回一个Promise对象
+        return new Promise(resolve => {
+          const event = key.replace('wait', '').toLowerCase()
+          // 监听指定事件，触发时解析Promise
+          target.addEventListener(event, resolve, { once: true })
+        })
+      }
+    })
+    return proxy
+  }
+
+  (async () => {
+    const btn = getElement('button')
+    let x = 1
+    while (x < 3) {
+      // 等待按钮点击事件
+      await btn.waitClick;
+      console.log('点击了按钮')
+      x++
+    }
+  })()
+</script>
+
+</html>
